@@ -27,65 +27,27 @@ def print_selector(file)
 end
 
 def parseSelector(selector)
-    if Array === selector then
-        case selector.size
-        when 0 then
-            puts 'Error'
-        when 1 then
-            # さらに子供がいるとき
-            if selector[0].members.size > 1 then
-                parseSelector(selector[0].members)
-            else
-                puts ' '
-                puts '...output_1'
-                puts selector[0]
-                puts '...'
-                puts ' '
-            end
+
+    def parseChild(s)
+        # さらに子供がいるとき
+        if s.members.size > 1 then
+            parseSelector(s.members)
         else
-            out = selector.slice!(0)
-            if out.members.size > 1 then
-                parseSelector(out.members)
-            else
-                puts ' '
-                puts '...output_1'
-                puts out
-                puts '...'
-                puts ' '
-            end
-            parseSelector(selector)
+            puts s
         end
     end
-end
 
-
-
-def parseSelector2(selector)
-    pp selector.class
     if Array === selector then
-        size = selector.size
-        pp size
         case selector.size
         when 0 then
             puts 'Error'
         when 1 then
-            puts ' '
-            puts '>>>output_1'
-            puts selector[0]
-            puts '<<<'
-            puts ' '
-
-            puts selector[0].class
-            puts selector[0].members
-            puts selector[0].members.size
+            parseChild(selector[0])
         else
-            puts ' '
-            puts '>>>output_2'
-            pp selector.slice!(0)
-            puts '<<<'
-            puts ' '
+            # 兄弟セレクタのの先頭のセレクタを分解
+            parseChild(selector.slice!(0))
 
-            p 'bigger than 1'
+            # 残りの兄弟セレクタを分かい
             parseSelector(selector)
         end
     end
