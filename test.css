@@ -1,0 +1,27 @@
+.hoge {
+    color: red;
+}
+
+.fuga {
+    color: blue;
+}
+
+.baz, .piyo {
+    color: yellow;
+    text-align: center;
+}
+
+#hogehoge{
+    display: block;
+    float : left;
+}
+
+#fugafuga,#bazbaz   {
+    float: right;
+    color: red;
+}
+
+#piyopiyo a {
+    margin-top: 10px;
+    padding: 10px 5px;
+}
