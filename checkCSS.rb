@@ -18,6 +18,7 @@ def print_selector(file, target, outputFile)
 
     arr.uniq!
     pp arr
+
     puts 'Selector Listed!'
     puts 'Start Searching...'
 
@@ -112,7 +113,7 @@ end
 def executeGrep(name, str, searching_folder, file)
     puts name
     if file.nil? then
-        results = system("grep -ir ".concat(str).concat(" ").concat(target));
+        results = system("grep -ir --exclude=*.svn* ".concat(str).concat(" ").concat(searching_folder));
         if !results then
             puts "NO FILE REFERS THIS SELECTOR!"
         end
@@ -122,7 +123,7 @@ def executeGrep(name, str, searching_folder, file)
         #results = system("grep -ir ".concat(str).concat(" ").concat(searching_folder))
 
         file.puts(name)
-        cmd = "grep -ir ".concat(str).concat(" ").concat(searching_folder)
+        cmd = "grep -ir --exclude=*.svn* ".concat(str).concat(" ").concat(searching_folder)
         out = ""
         systemu cmd, :out => out
 
