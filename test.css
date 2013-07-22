@@ -1,3 +1,8 @@
+.btn div, #btn2 a span, #test div span{
+    margin-top: 10px;
+    padding: 10px 5px;
+}
+
 .hoge {
     color: red;
 }
