@@ -1,7 +1,7 @@
 require 'sass/css'
 require 'pp'
 
-def print_selector(file)
+def print_selector(file, target)
     css = ""
     arr = []
 
@@ -11,29 +11,12 @@ def print_selector(file)
     css = Sass::CSS.new(css, {:filename => file})
     css_tree = css.__send__(:build_tree)
     css_tree.select {|n| n.is_a?(Sass::Tree::RuleNode) }.each do |rule|
-        pp "=============start==============="
-        pp rule.parsed_rules.members
-        #parseSelector(rule.parsed_rules.members, arr)
+        #pp rule.parsed_rules.members
         parseSelector(rule.parsed_rules.members, arr)
+    end
 
-
-=begin
-        pp rule.parsed_rules.members
-        pp rule.parsed_rules.members.class
-        pp rule.parsed_rules.members.size
-        rule.parsed_rules.members.each do |selector|
-            pp selector.members.class
-            pp selector.members.size
-            #pp selector.gsub(/\s.+/, '')
-            pp selector
-        end
-=end
-  end
-
-        pp "=============final_output==============="
-        arr.uniq!
-        pp arr
-        delHead(arr)
+    arr.uniq!
+    return searchSelector(arr, target)
 end
 
 def parseSelector(selector, arr)
@@ -43,7 +26,6 @@ def parseSelector(selector, arr)
         if s.members.size > 1 then
             parseSelector(s.members, a)
         else
-            puts s
             a.push(s.members[0])
         end
     end
@@ -64,13 +46,35 @@ def parseSelector(selector, arr)
     end
 end
 
-def delHead(s_arr)
+def searchSelector(s_arr, target)
+    new_arr = []
     s_arr.each do |s|
-        test = s.to_s()
-        pp s.class
-        test.gsub(/#/, '')
-        pp test
+        s_selector = s.to_s()
+        puts s_selector
+
+        id = /^#/.match(s_selector)
+        klass =  /^\./.match(s_selector)
+
+        if !id.nil? then
+            s_selector.gsub!(/^#/, '')
+            s_selector.gsub!(/#.*/, '')
+            new_arr.push(s_selector)
+            str = "id.*=.*".concat(s_selector)
+            results = system("grep -r ".concat(str).concat(" ").concat(target));
+        elsif !klass.nil? then
+            s_selector.gsub!(/^\./, '')
+            s_selector.gsub!(/\.*/, '')
+            new_arr.push(s_selector)
+        else
+            puts 'This is TAG'
+        end
+
+        if !results then
+            puts "NO FILE REFERS THIS SELECTOR!"
+        end
+        puts ' ' 
     end
+    return new_arr
 end
 
-print_selector(ARGV[0])
+print_selector(ARGV[0], ARGV[1])
