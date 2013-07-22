@@ -59,12 +59,16 @@ def searchSelector(s_arr, target)
             s_selector.gsub!(/^#/, '')
             s_selector.gsub!(/#.*/, '')
             new_arr.push(s_selector)
-            str = "id.*=.*".concat(s_selector)
-            results = system("grep -r ".concat(str).concat(" ").concat(target));
+            #str = "id.*=.*".concat(s_selector)
+            str = "id.*".concat(s_selector)
+            results = system("grep -ir ".concat(str).concat(" ").concat(target));
         elsif !klass.nil? then
             s_selector.gsub!(/^\./, '')
             s_selector.gsub!(/\.*/, '')
             new_arr.push(s_selector)
+            #str = "class.*=.*".concat(s_selector)
+            str = "class.*".concat(s_selector)
+            results = system("grep -ir ".concat(str).concat(" ").concat(target));
         else
             puts 'This is TAG'
         end
