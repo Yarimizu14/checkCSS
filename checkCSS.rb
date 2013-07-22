@@ -1,7 +1,7 @@
 require 'sass/css'
 require 'pp'
 
-def print_selector(file, target)
+def print_selector(file, target, outputFile)
     css = ""
     arr = []
 
@@ -17,7 +17,15 @@ def print_selector(file, target)
 
     arr.uniq!
     pp arr
-    #return searchSelector(arr, target)
+    puts 'Selector Listed!'
+    puts 'Start Searching...'
+    if outputFile.nil? then
+        puts 'empty!'
+        puts outputFile.nil?
+    else
+        puts outputFile
+    end
+    return searchSelector(arr, target, outputFile)
 end
 
 def parseSelector(selector, arr)
@@ -58,7 +66,6 @@ def getSelector(s)
     
     id = /#.*/.match(s_selector).to_s
     if !id.empty? then
-        puts id
         id.gsub!(/.+\..*/, '')
         id.gsub!(/.+:.*/, '')
         return id
@@ -66,17 +73,16 @@ def getSelector(s)
 
     klass = /\..*/.match(s_selector).to_s
     if !klass.empty? then
-        puts klass
         klass.gsub!(/.+\..*/, '')
         klass.gsub!(/.+:.*/, '')
         return klass
     end
 end
 
-def searchSelector(s_arr, target)
+def searchSelector(s_arr, target, out)
     new_arr = []
     s_arr.each do |s|
-        #s_selector = s.to_s()
+        s_selector = s.to_s()
 
         id = /^#/.match(s_selector)
         klass =  /^\./.match(s_selector)
@@ -85,26 +91,43 @@ def searchSelector(s_arr, target)
             s_selector.gsub!(/^#/, '')
             s_selector.gsub!(/#.*/, '')
             new_arr.push(s_selector)
+            puts s_selector
             #str = "id.*=.*".concat(s_selector)
             str = "id.*".concat(s_selector)
-            results = system("grep -ir ".concat(str).concat(" ").concat(target));
+            executeGrep(str, target, out)
         elsif !klass.nil? then
             s_selector.gsub!(/^\./, '')
             s_selector.gsub!(/\.*/, '')
             new_arr.push(s_selector)
+            puts s_selector
             #str = "class.*=.*".concat(s_selector)
             str = "class.*".concat(s_selector)
-            results = system("grep -ir ".concat(str).concat(" ").concat(target));
+            executeGrep(str, target, out)
         else
             puts 'This is TAG'
         end
 
-        if !results then
-            puts "NO FILE REFERS THIS SELECTOR!"
-        end
         puts ' ' 
     end
     return new_arr
 end
 
-print_selector(ARGV[0], ARGV[1])
+def executeGrep(str, target, out)
+    puts out
+    puts target
+    puts str
+    if out.nil? then
+        results = system("grep -ir ".concat(str).concat(" ").concat(target));
+        if !results then
+            puts "NO FILE REFERS THIS SELECTOR!"
+        end
+    else
+        results = system("grep -ir ".concat(str).concat(" ").concat(target).concat(" >> ").concat(out));
+        if !results then
+            system("echo >> ".concat(out))
+        end
+    end
+    return results
+end
+
+print_selector(ARGV[0], ARGV[1], ARGV[2])
