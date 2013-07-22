@@ -16,17 +16,24 @@ def print_selector(file, target)
     end
 
     arr.uniq!
-    return searchSelector(arr, target)
+    pp arr
+    #return searchSelector(arr, target)
 end
 
 def parseSelector(selector, arr)
 
     def parseChild(s, a)
         # さらに子供がいるとき
-        if s.members.size > 1 then
-            parseSelector(s.members, a)
+        if s.respond_to?(:members) then 
+            if s.members.size > 1 then
+                parseSelector(s.members, a)
+            else
+                new_s = getSelector(s.members[0])
+                a.push(new_s)
+            end
         else
-            a.push(s.members[0])
+            new_s = getSelector(s)
+            a.push(new_s)
         end
     end
 
@@ -46,11 +53,25 @@ def parseSelector(selector, arr)
     end
 end
 
+def getSelector(s)
+    s_selector = s.to_s()
+    #r = s_selector.gsub(/^#/, 'ID')
+    
+    id = /#.*/.match(s_selector)
+    if !id.nil? then
+        return id.to_s
+    end
+
+    klass = /\..*/.match(s_selector)
+    if !klass.nil? then
+        return klass.to_s
+    end
+end
+
 def searchSelector(s_arr, target)
     new_arr = []
     s_arr.each do |s|
         s_selector = s.to_s()
-        puts s_selector
 
         id = /^#/.match(s_selector)
         klass =  /^\./.match(s_selector)
