@@ -55,23 +55,28 @@ end
 
 def getSelector(s)
     s_selector = s.to_s()
-    #r = s_selector.gsub(/^#/, 'ID')
     
-    id = /#.*/.match(s_selector)
-    if !id.nil? then
-        return id.to_s
+    id = /#.*/.match(s_selector).to_s
+    if !id.empty? then
+        puts id
+        id.gsub!(/.+\..*/, '')
+        id.gsub!(/.+:.*/, '')
+        return id
     end
 
-    klass = /\..*/.match(s_selector)
-    if !klass.nil? then
-        return klass.to_s
+    klass = /\..*/.match(s_selector).to_s
+    if !klass.empty? then
+        puts klass
+        klass.gsub!(/.+\..*/, '')
+        klass.gsub!(/.+:.*/, '')
+        return klass
     end
 end
 
 def searchSelector(s_arr, target)
     new_arr = []
     s_arr.each do |s|
-        s_selector = s.to_s()
+        #s_selector = s.to_s()
 
         id = /^#/.match(s_selector)
         klass =  /^\./.match(s_selector)
